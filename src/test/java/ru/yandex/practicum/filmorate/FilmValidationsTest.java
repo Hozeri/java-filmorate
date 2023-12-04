@@ -23,7 +23,7 @@ public class FilmValidationsTest {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
     }
-    
+
     @Test
     public void emptyNameShouldFailValidation() {
         Film film = Film.builder()
