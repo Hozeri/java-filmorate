@@ -32,15 +32,13 @@ public class UserController {
     }
 
     @PutMapping
-    private User update(@RequestBody User user) {
-        User updatedUser = users.get(user.getId());
-        updatedUser.setBirthday(user.getBirthday());
-        updatedUser.setName(user.getName());
-        updatedUser.setLogin(user.getLogin());
-        updatedUser.setEmail(user.getEmail());
-        users.put(updatedUser.getId(), updatedUser);
-        log.info("Обновлены данные пользователя с id = {}", updatedUser.getId());
-        return updatedUser;
+    private User update(@RequestBody @Valid User user) {
+        if (!users.containsKey(user.getId())) {
+            throw new IllegalArgumentException("Пользователя с таким id не существует");
+        }
+        users.put(user.getId(), user);
+        log.info("Обновлены данные пользователя с id = {}", user.getId());
+        return user;
     }
 
     @GetMapping

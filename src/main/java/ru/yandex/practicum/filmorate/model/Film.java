@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
+import lombok.Builder;
 import lombok.Data;
 import ru.yandex.practicum.filmorate.DateValidation;
 
@@ -12,6 +13,7 @@ import java.time.LocalDate;
  * Film.
  */
 @Data
+@Builder
 public class Film {
 
     private int id;

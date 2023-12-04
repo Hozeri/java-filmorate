@@ -32,15 +32,13 @@ public class FilmController {
     }
 
     @PutMapping
-    private Film update(@RequestBody Film film) {
-        Film updatedFilm = films.get(film.getId());
-        updatedFilm.setDescription(film.getDescription());
-        updatedFilm.setName(film.getName());
-        updatedFilm.setReleaseDate(film.getReleaseDate());
-        updatedFilm.setDuration(film.getDuration());
-        films.put(updatedFilm.getId(), updatedFilm);
-        log.info("Обновлены данные фильма с id = {}", updatedFilm.getId());
-        return updatedFilm;
+    private Film update(@RequestBody @Valid Film film) {
+        if (!films.containsKey(film.getId())) {
+            throw new IllegalArgumentException("Фильма с таким id не существует");
+        }
+        films.put(film.getId(), film);
+        log.info("Обновлены данные фильма с id = {}", film.getId());
+        return film;
     }
 
     @GetMapping
