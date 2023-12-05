@@ -5,7 +5,7 @@ import lombok.Data;
 import ru.yandex.practicum.filmorate.DateValidation;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
@@ -23,6 +23,6 @@ public class Film {
     private String description;
     @DateValidation
     private LocalDate releaseDate;
-    @PositiveOrZero(message = "Продолжительность фильма должна быть положительной")
+    @Positive(message = "Продолжительность фильма должна быть положительной")
     private int duration;
 }
