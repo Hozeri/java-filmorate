@@ -2,18 +2,21 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
+import java.util.Set;
+import java.util.TreeSet;
 
 @Data
 @Builder
 public class User {
 
-    private int id;
+    private Integer id;
     @NotBlank(message = "Электронная почта не может быть пустой")
     @Email
     private String email;
@@ -23,8 +26,9 @@ public class User {
     private String name;
     @PastOrPresent
     private LocalDate birthday;
+    private Set<Integer> friends;
 
-    public User(int id, String email, String login, String name, LocalDate birthday) {
+    public User(Integer id, String email, String login, String name, LocalDate birthday, Set<Integer> friends) {
         this.id = id;
         this.email = email;
         this.login = login;
@@ -34,5 +38,6 @@ public class User {
             this.name = name;
         }
         this.birthday = birthday;
+        this.friends = new TreeSet<>();
     }
 }
