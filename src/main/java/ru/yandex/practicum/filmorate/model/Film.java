@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.Builder;
 import lombok.Data;
-import lombok.Singular;
 import ru.yandex.practicum.filmorate.DateValidation;
 
 import javax.validation.constraints.NotBlank;
