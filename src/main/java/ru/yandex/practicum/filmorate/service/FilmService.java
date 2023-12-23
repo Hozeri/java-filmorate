@@ -47,12 +47,14 @@ public class FilmService {
     public Film addLike(Integer id, Integer userId) {
         Film film = checkFilmAndUserNotNull(id, userId);
         film.getLikes().add(userId);
+        log.info("Для фильма c id {} добавлен лайк от пользователя c userId {}", id, userId);
         return film;
     }
 
     public void deleteLike(Integer id, Integer userId) {
         Film film = checkFilmAndUserNotNull(id, userId);
         film.getLikes().remove(userId);
+        log.info("Для фильма c id {} удалён лайк от пользователя с userId {}", id, userId);
     }
 
     public List<Film> getMostLikedFilms(Integer count) {

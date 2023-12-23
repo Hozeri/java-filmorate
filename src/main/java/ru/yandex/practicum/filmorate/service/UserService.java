@@ -41,6 +41,7 @@ public class UserService {
         User user = checkUserNotNull(id, friendId);
         user.getFriends().add(friendId);
         userStorage.getUserById(friendId).getFriends().add(id);
+        log.info("Пользователи с id {} и id {} стали друзьями", id, friendId);
         return user;
     }
 
@@ -48,6 +49,7 @@ public class UserService {
         User user = checkUserNotNull(id, friendId);
         user.getFriends().remove(friendId);
         userStorage.getUserById(friendId).getFriends().remove(id);
+        log.info("Пользователи с id {} и id {} перестали быть друзьями", id, friendId);
     }
 
     public List<User> getUserFriends(Integer id) {
@@ -55,6 +57,17 @@ public class UserService {
         return user.getFriends().stream()
                 .map(userStorage::getUserById)
                 .collect(Collectors.toList());
+    }
+
+    private List<User> getUserFriendsWithoutChecking(Integer id) {
+        Set<Integer> users = userStorage.getUserById(id).getFriends();
+        if (users.isEmpty()) {
+            return List.of();
+        } else {
+            return users.stream()
+                    .map(userStorage::getUserById)
+                    .collect(Collectors.toList());
+        }
     }
 
     public List<User> getCommonFriends(Integer id, Integer otherId) {
@@ -66,17 +79,6 @@ public class UserService {
         } else {
             return userFriends.stream()
                     .filter(otherUserFriends::contains)
-                    .collect(Collectors.toList());
-        }
-    }
-
-    private List<User> getUserFriendsWithoutChecking(Integer id) {
-        Set<Integer> users = userStorage.getUserById(id).getFriends();
-        if (users.isEmpty()) {
-            return List.of();
-        } else {
-            return users.stream()
-                    .map(userStorage::getUserById)
                     .collect(Collectors.toList());
         }
     }
