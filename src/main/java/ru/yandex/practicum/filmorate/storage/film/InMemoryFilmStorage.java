@@ -40,8 +40,4 @@ public class InMemoryFilmStorage implements FilmStorage {
     public Film getFilmById(Integer id) {
         return films.get(id);
     }
-
-    public void deleteLike(Integer id, Integer userId) {
-        films.get(id).getLikes().remove(userId);
-    }
 }
