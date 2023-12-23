@@ -27,7 +27,7 @@ public class FilmService {
 
     public Film update(Film film) {
         if (filmStorage.getFilmById(film.getId()) == null) {
-            throw new IllegalArgumentException("Фильма с таким id не существует");
+            throw new FilmNotFoundException("Фильма с таким id не существует");
         }
         return filmStorage.update(film);
     }
