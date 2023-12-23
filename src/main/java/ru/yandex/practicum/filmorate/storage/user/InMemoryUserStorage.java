@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
 
+import javax.validation.ValidationException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +27,9 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User update(User user) {
+        if (user.getId() == null || user.getId() <= 0) {
+            throw new ValidationException("id пользователя не может быть пустым или отрицательным");
+        }
         users.put(user.getId(), user);
         log.info("Обновлены данные пользователя с id = {}", user.getId());
         return user;

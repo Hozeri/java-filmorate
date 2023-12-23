@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
 
+import javax.validation.ValidationException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +27,9 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film update(Film film) {
+        if (film.getId() == null || film.getId() <= 0) {
+            throw new ValidationException("id фильма не может быть пустым или отрицательным");
+        }
         films.put(film.getId(), film);
         log.info("Обновлены данные фильма с id = {}", film.getId());
         return film;

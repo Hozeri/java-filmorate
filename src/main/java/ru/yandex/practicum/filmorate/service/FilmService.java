@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
+import javax.validation.ValidationException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,6 +38,9 @@ public class FilmService {
     }
 
     public Film getFilmById(Integer id) {
+        if (id == null || id <= 0) {
+            throw new ValidationException("id фильма не может быть пустым или отрицательным");
+        }
         Film film = filmStorage.getFilmById(id);
         if (film == null) {
             throw new FilmNotFoundException("Фильма с таким id не существует");
