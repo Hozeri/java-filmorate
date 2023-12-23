@@ -7,7 +7,6 @@ import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-import javax.validation.ValidationException;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -86,7 +85,7 @@ public class UserService {
 
     private User checkUserNotNull(Integer id, Integer otherId) {
         if (id == null || id <= 0 || otherId == null || otherId <= 0) {
-            throw new ValidationException("id пользователя не может быть пустым или отрицательным");
+            throw new UserNotFoundException("id пользователя не может быть пустым или отрицательным");
         }
         User user = userStorage.getUserById(id);
         User friend = userStorage.getUserById(otherId);
@@ -99,7 +98,7 @@ public class UserService {
 
     private User checkUserNotNull(Integer id) {
         if (id == null || id <= 0) {
-            throw new ValidationException("id пользователя не может быть пустым или отрицательным");
+            throw new UserNotFoundException("id пользователя не может быть пустым или отрицательным");
         }
         User user = userStorage.getUserById(id);
         if (user == null) {
