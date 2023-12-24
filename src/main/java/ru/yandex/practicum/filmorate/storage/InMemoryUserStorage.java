@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage.user;
+package ru.yandex.practicum.filmorate.storage;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -11,7 +11,7 @@ import java.util.Map;
 
 @Component
 @Slf4j
-public class InMemoryUserStorage implements UserStorage {
+public class InMemoryUserStorage implements Storage<User> {
 
     private final Map<Integer, User> users = new HashMap<>();
     private Integer id = 1;
@@ -32,12 +32,12 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public List<User> getAllUsers() {
+    public List<User> getAll() {
         return new ArrayList<>(users.values());
     }
 
     @Override
-    public User getUserById(Integer id) {
+    public User getById(Integer id) {
         return users.get(id);
     }
 }

@@ -7,8 +7,7 @@ import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
+import ru.yandex.practicum.filmorate.storage.Storage;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,29 +17,29 @@ import java.util.stream.Collectors;
 @Slf4j
 public class FilmService {
 
-    private final FilmStorage filmStorage;
-    private final UserStorage userStorage;
+    private final Storage<Film> filmStorage;
+    private final Storage<User> userStorage;
 
     public Film create(Film film) {
         return filmStorage.create(film);
     }
 
     public Film update(Film film) {
-        if (filmStorage.getFilmById(film.getId()) == null) {
+        if (filmStorage.getById(film.getId()) == null) {
             throw new FilmNotFoundException("Фильма с таким id не существует");
         }
         return filmStorage.update(film);
     }
 
     public List<Film> getAllFilms() {
-        return filmStorage.getAllFilms();
+        return filmStorage.getAll();
     }
 
     public Film getFilmById(Integer id) {
         if (id == null || id <= 0) {
             throw new FilmNotFoundException("id фильма не может быть пустым или отрицательным");
         }
-        Film film = filmStorage.getFilmById(id);
+        Film film = filmStorage.getById(id);
         if (film == null) {
             throw new FilmNotFoundException("Фильма с таким id не существует");
         }
@@ -61,7 +60,7 @@ public class FilmService {
     }
 
     public List<Film> getMostLikedFilms(Integer count) {
-        return filmStorage.getAllFilms().stream()
+        return filmStorage.getAll().stream()
                 .sorted(this::compare)
                 .limit(count)
                 .collect(Collectors.toList());
@@ -73,8 +72,8 @@ public class FilmService {
     }
 
     private Film checkFilmAndUserNotNull(Integer id, Integer userId) {
-        Film film = filmStorage.getFilmById(id);
-        User user = userStorage.getUserById(userId);
+        Film film = filmStorage.getById(id);
+        User user = userStorage.getById(userId);
         if (film == null) {
             throw new FilmNotFoundException("Фильма с таким id не существует");
         } else if (user == null) {

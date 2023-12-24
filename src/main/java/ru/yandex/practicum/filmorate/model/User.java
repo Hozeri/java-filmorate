@@ -25,18 +25,5 @@ public class User {
     private String name;
     @PastOrPresent
     private LocalDate birthday;
-    private Set<Integer> friends;
-
-    public User(Integer id, String email, String login, String name, LocalDate birthday, Set<Integer> friends) {
-        this.id = id;
-        this.email = email;
-        this.login = login;
-        if (name == null || name.isBlank()) {
-            this.name = login;
-        } else {
-            this.name = name;
-        }
-        this.birthday = birthday;
-        this.friends = new TreeSet<>();
-    }
+    private final Set<Integer> friends = new TreeSet<>();
 }
