@@ -8,12 +8,14 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
+import java.util.Set;
+import java.util.TreeSet;
 
 @Data
 @Builder
 public class User {
 
-    private int id;
+    private Integer id;
     @NotBlank(message = "Электронная почта не может быть пустой")
     @Email
     private String email;
@@ -23,16 +25,5 @@ public class User {
     private String name;
     @PastOrPresent
     private LocalDate birthday;
-
-    public User(int id, String email, String login, String name, LocalDate birthday) {
-        this.id = id;
-        this.email = email;
-        this.login = login;
-        if (name == null || name.isBlank()) {
-            this.name = login;
-        } else {
-            this.name = name;
-        }
-        this.birthday = birthday;
-    }
+    private final Set<Integer> friends = new TreeSet<>();
 }

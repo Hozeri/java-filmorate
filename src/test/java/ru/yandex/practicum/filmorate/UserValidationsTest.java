@@ -11,7 +11,6 @@ import javax.validation.ValidatorFactory;
 import java.time.LocalDate;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class UserValidationsTest {
@@ -73,17 +72,6 @@ public class UserValidationsTest {
                 .build();
         Set<ConstraintViolation<User>> violations = validator.validate(user);
         assertFalse(violations.isEmpty());
-    }
-
-    @Test
-    public void blankNameShouldBeReplacedWithLogin() {
-        User user = User.builder()
-                .id(ID)
-                .login("Login")
-                .email("exmaple@email.com")
-                .birthday(LocalDate.of(2023, 1, 1))
-                .build();
-        assertEquals(user.getName(), user.getLogin());
     }
 
     @Test
