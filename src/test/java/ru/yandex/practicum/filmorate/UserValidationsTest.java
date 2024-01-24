@@ -70,7 +70,7 @@ public class UserValidationsTest {
         user.setName("Name");
         user.setLogin("Login");
         user.setEmail("example@email.com");
-        user.setBirthday(LocalDate.of(2100, 1, 1));;
+        user.setBirthday(LocalDate.of(2100, 1, 1));
         Set<ConstraintViolation<User>> violations = validator.validate(user);
         assertFalse(violations.isEmpty());
     }
