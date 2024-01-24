@@ -15,15 +15,15 @@ import java.util.List;
 @AllArgsConstructor
 public class MpaController {
 
-    private MpaService mpaService;
+    public final MpaService mpaService;
 
     @GetMapping
-    private List<Mpa> getAllMpa() {
+    public List<Mpa> getAllMpa() {
         return mpaService.getAllMpa();
     }
 
     @GetMapping("/{id}")
-    private Mpa getMpaById(@PathVariable Integer id) {
+    public Mpa getMpaById(@PathVariable Integer id) {
         return mpaService.getMpaById(id);
     }
 

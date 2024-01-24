@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -14,7 +15,10 @@ import ru.yandex.practicum.filmorate.repository.storages.FilmStorage;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -81,18 +85,18 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public List<Film> getAll() {
-        List<Film> films = jdbcTemplate.query(GET_ALL_FILMS, this::makeFilm);
+        List<Film> films = jdbcTemplate.query(GET_ALL_FILMS, this::makeFilms);
         if (!films.isEmpty()) {
-            Map<Integer, List<Genre>> filmGenres;
+            Map<Integer, LinkedHashSet<Genre>> filmGenres;
             try {
                 filmGenres = jdbcTemplate.queryForObject(GET_ALL_FILM_GENRES, (rs, rowNum) -> {
-                    Map<Integer, List<Genre>> temp = new HashMap<>();
+                    Map<Integer, LinkedHashSet<Genre>> temp = new HashMap<>();
                     do {
                         if (temp.containsKey(rs.getInt("film_id"))) {
                             temp.get(rs.getInt("film_id"))
                                     .add(new Genre(rs.getInt("genre_id"), rs.getString("name")));
                         } else {
-                            List<Genre> genres = new ArrayList<>();
+                            LinkedHashSet<Genre> genres = new LinkedHashSet<>();
                             genres.add(new Genre(rs.getInt("genre_id"), rs.getString("name")));
                             temp.put(rs.getInt("film_id"), genres);
                         }
@@ -107,7 +111,7 @@ public class FilmDbStorage implements FilmStorage {
                         if (filmGenres.get(film.getId()) != null) {
                             film.setGenres(filmGenres.get(film.getId()));
                         } else {
-                            film.setGenres(List.of());
+                            film.setGenres(new LinkedHashSet<>());
                         }
                     })
                     .collect(Collectors.toList());
@@ -137,41 +141,18 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public List<Film> getMostLikedFilms(Integer count) {
-        List<Film> films = jdbcTemplate.query(GET_ALL_FILMS, this::makeFilm);
-        Map<Integer, Integer> filmLikes;
+        List<Film> films = jdbcTemplate.query(GET_ALL_FILMS, this::makeFilms);
+        List<Film> mostLikedFilms;
         if (!films.isEmpty()) {
             try {
-                filmLikes = jdbcTemplate.queryForObject(GET_ALL_FILM_LIKES, (rs, rowNum) -> {
-                    Map<Integer, Integer> temp = new HashMap<>();
-                    do {
-                        temp.put(rs.getInt("id"), rs.getInt("likes"));
-                    } while (rs.next());
-                    return temp;
-                });
+                mostLikedFilms = jdbcTemplate.query(GET_ALL_FILM_LIKES, this::makeFilms, count);
             } catch (EmptyResultDataAccessException e) {
                 return List.of();
             }
         } else {
             return List.of();
         }
-        return films.stream()
-                .peek(film -> film.getLikes().add(filmLikes.get(film.getId())))
-                .sorted(this::compare)
-                .limit(count)
-                .collect(Collectors.toList());
-    }
-
-    private int compare(Film f1, Film f2) {
-        Integer f1Size = f1.getLikes().size();
-        Integer f2Size = f2.getLikes().size();
-        if (f1.getLikes().contains(0)) {
-            f1Size = 0;
-        }
-        if (f2.getLikes().contains(0)) {
-            f2Size = 0;
-        }
-        int result = Integer.compare(f1Size, f2Size);
-        return -1 * result;
+        return mostLikedFilms;
     }
 
     private Film makeFilm(ResultSet rs, int rowNum) throws SQLException {
@@ -186,6 +167,17 @@ public class FilmDbStorage implements FilmStorage {
         return film;
     }
 
+    private Film makeFilms(ResultSet rs, int rowNum) throws SQLException {
+        Film film = new Film();
+        film.setId(rs.getInt("id"));
+        film.setName(rs.getString("name"));
+        film.setDescription(rs.getString("description"));
+        film.setReleaseDate(rs.getDate("release_date").toLocalDate());
+        film.setDuration(rs.getInt("duration"));
+        film.setMpa(new Mpa(rs.getInt("mpa_id"), rs.getString("mpa_name")));
+        return film;
+    }
+
     private void addGenresByFilmId(Film film) {
         List<Genre> genres = jdbcTemplate.query(
                 GET_ALL_GENRES_BY_FILM_ID,
@@ -193,7 +185,7 @@ public class FilmDbStorage implements FilmStorage {
                 film.getId()
         );
         if (!genres.isEmpty()) {
-            film.setGenres(genres);
+            film.setGenres(new LinkedHashSet<>(genres));
         }
     }
 
@@ -213,7 +205,7 @@ public class FilmDbStorage implements FilmStorage {
                     (rs, rowNum) -> new Genre(rs.getInt("id"), rs.getString("name")),
                     film.getId()
             );
-            film.setGenres(genres);
+            film.setGenres(new LinkedHashSet<>(genres));
         }
     }
 
@@ -229,7 +221,7 @@ public class FilmDbStorage implements FilmStorage {
                     (rs, rowNum) -> new Genre(rs.getInt("id"), rs.getString("name")),
                     film.getId()
             );
-            film.setGenres(genres);
+            film.setGenres(new LinkedHashSet<>(genres));
         } else {
             jdbcTemplate.update(DELETE_FILM_GENRES, film.getId());
         }

@@ -3,7 +3,7 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
+import ru.yandex.practicum.filmorate.exception.EntityNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.repository.storages.UserStorage;
 
@@ -28,7 +28,7 @@ public class UserService {
 
     public User update(User user) {
         if (userStorage.getById(user.getId()) == null) {
-            throw new UserNotFoundException("Пользователя с таким id не существует");
+            throw new EntityNotFoundException("Пользователя с таким id не существует");
         }
         return userStorage.update(user);
     }
@@ -43,15 +43,13 @@ public class UserService {
 
     public User addFriend(Integer id, Integer friendId) {
         User user = checkUserNotNull(id, friendId);
-        user.getFriends().add(friendId);
         userStorage.addFriend(id, friendId);
         log.info("Пользователь {} добавил в друзья пользователя {}", id, friendId);
         return user;
     }
 
     public void deleteFriend(Integer id, Integer friendId) {
-        User user = checkUserNotNull(id, friendId);
-        user.getFriends().remove(friendId);
+        checkUserNotNull(id, friendId);
         userStorage.deleteFriend(id, friendId);
         log.info("Пользователь {} удалил из друзей пользователя {}", id, friendId);
     }
@@ -76,12 +74,12 @@ public class UserService {
 
     private User checkUserNotNull(Integer id, Integer otherId) {
         if (id == null || id <= 0 || otherId == null || otherId <= 0) {
-            throw new UserNotFoundException("id пользователя не может быть пустым или отрицательным");
+            throw new EntityNotFoundException("id пользователя не может быть пустым или отрицательным");
         }
         User user = userStorage.getById(id);
         User friend = userStorage.getById(otherId);
         if (user == null || friend == null) {
-            throw new UserNotFoundException("Пользователя с таким id не существует");
+            throw new EntityNotFoundException("Пользователя с таким id не существует");
         } else {
             return user;
         }
@@ -89,11 +87,11 @@ public class UserService {
 
     private User checkUserNotNull(Integer id) {
         if (id == null || id <= 0) {
-            throw new UserNotFoundException("id пользователя не может быть пустым или отрицательным");
+            throw new EntityNotFoundException("id пользователя не может быть пустым или отрицательным");
         }
         User user = userStorage.getById(id);
         if (user == null) {
-            throw new UserNotFoundException("Пользователя с таким id не существует");
+            throw new EntityNotFoundException("Пользователя с таким id не существует");
         } else {
             return user;
         }
