@@ -11,7 +11,6 @@ import ru.yandex.practicum.filmorate.repository.storages.FilmStorage;
 import ru.yandex.practicum.filmorate.repository.storages.UserStorage;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
