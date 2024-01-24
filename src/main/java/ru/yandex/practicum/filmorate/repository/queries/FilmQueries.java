@@ -51,12 +51,15 @@ public class FilmQueries {
                     "LEFT JOIN genres AS g ON fg.genre_id = g.id";
     public static final String GET_ALL_FILM_LIKES =
             "SELECT " +
-                    "f.id,  " +
+                    "f.id, " +
                     "COUNT(l.user_id) AS likes " +
                     "FROM films AS f " +
                     "LEFT JOIN likes AS l ON f.id = l.film_id " +
                     "GROUP BY f.id";
-    public static final String DELETE_FILM_GENRES = "DELETE FROM film_genres WHERE film_id = ?";
+
     public static final String INSERT_FILM_GENRES = "INSERT INTO film_genres (film_id, genre_id) VALUES (?, ?)";
+    public static final String INSERT_FILM_LIKE = "INSERT INTO likes (film_id, user_id) VALUES (?, ?)";
+    public static final String DELETE_FILM_GENRES = "DELETE FROM film_genres WHERE film_id = ?";
+    public static final String DELETE_FILM_LIKE = "DELETE FROM likes WHERE film_id = ? AND user_id = ?";
     public static final String CHECK_IS_EXIST_BY_ID = "SELECT EXISTS (SELECT 1 FROM films WHERE id = ?)";
 }

@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.repository;
+package ru.yandex.practicum.filmorate.repository.storageimpl;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,10 +9,14 @@ import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
+import ru.yandex.practicum.filmorate.repository.storages.FilmStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,10 +24,13 @@ import java.util.stream.Collectors;
 
 import static ru.yandex.practicum.filmorate.repository.queries.FilmQueries.CHECK_IS_EXIST_BY_ID;
 import static ru.yandex.practicum.filmorate.repository.queries.FilmQueries.DELETE_FILM_GENRES;
+import static ru.yandex.practicum.filmorate.repository.queries.FilmQueries.DELETE_FILM_LIKE;
 import static ru.yandex.practicum.filmorate.repository.queries.FilmQueries.GET_ALL_FILMS;
 import static ru.yandex.practicum.filmorate.repository.queries.FilmQueries.GET_ALL_FILM_GENRES;
+import static ru.yandex.practicum.filmorate.repository.queries.FilmQueries.GET_ALL_FILM_LIKES;
 import static ru.yandex.practicum.filmorate.repository.queries.FilmQueries.GET_FILM_BY_ID;
 import static ru.yandex.practicum.filmorate.repository.queries.FilmQueries.INSERT_FILM_GENRES;
+import static ru.yandex.practicum.filmorate.repository.queries.FilmQueries.INSERT_FILM_LIKE;
 import static ru.yandex.practicum.filmorate.repository.queries.FilmQueries.UPDATE_FILM_BY_ID;
 import static ru.yandex.practicum.filmorate.repository.queries.GenresQueries.GET_ALL_GENRES_BY_FILM_ID;
 import static ru.yandex.practicum.filmorate.repository.queries.MpaQueries.GET_MPA_NAME_BY_FILM_ID;
@@ -31,7 +38,7 @@ import static ru.yandex.practicum.filmorate.repository.queries.MpaQueries.GET_MP
 @Repository
 @Slf4j
 @AllArgsConstructor
-public class FilmDbStorage implements Storage<Film> {
+public class FilmDbStorage implements FilmStorage {
 
     private JdbcTemplate jdbcTemplate;
 
@@ -119,6 +126,55 @@ public class FilmDbStorage implements Storage<Film> {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public void addLike(Integer id, Integer userId) {
+        jdbcTemplate.update(INSERT_FILM_LIKE, id, userId);
+    }
+
+    @Override
+    public void deleteLike(Integer id, Integer userId) {
+        jdbcTemplate.update(DELETE_FILM_LIKE, id, userId);
+    }
+
+    @Override
+    public List<Film> getMostLikedFilms(Integer count) {
+        List<Film> films = jdbcTemplate.query(GET_ALL_FILMS, this::makeFilm);
+        Map<Integer, Integer> filmLikes;
+        if (!films.isEmpty()) {
+            try {
+                filmLikes = jdbcTemplate.queryForObject(GET_ALL_FILM_LIKES, (rs, rowNum) -> {
+                    Map<Integer, Integer> temp = new HashMap<>();
+                    do {
+                        temp.put(rs.getInt("id"), rs.getInt("likes"));
+                    } while (rs.next());
+                    return temp;
+                });
+            } catch (EmptyResultDataAccessException e) {
+                return List.of();
+            }
+        } else {
+            return List.of();
+        }
+        return films.stream()
+                .peek(film -> film.getLikes().add(filmLikes.get(film.getId())))
+                .sorted(this::compare)
+                .limit(count)
+                .collect(Collectors.toList());
+    }
+
+    private int compare(Film f1, Film f2) {
+        Integer f1Size = f1.getLikes().size();
+        Integer f2Size = f2.getLikes().size();
+        if (f1.getLikes().contains(0)) {
+            f1Size = 0;
+        }
+        if (f2.getLikes().contains(0)) {
+            f2Size = 0;
+        }
+        int result = Integer.compare(f1Size, f2Size);
+        return -1 * result;
     }
 
     private Film makeFilm(ResultSet rs, int rowNum) throws SQLException {

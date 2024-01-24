@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.MpaNotFoundException;
 import ru.yandex.practicum.filmorate.model.Mpa;
-import ru.yandex.practicum.filmorate.repository.MpaDbStorage;
+import ru.yandex.practicum.filmorate.repository.storageimpl.MpaDbStorage;
 
 import java.util.List;
 

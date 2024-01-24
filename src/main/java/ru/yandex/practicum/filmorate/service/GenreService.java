@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.GenreNotFoundException;
 import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.repository.GenreDbStorage;
+import ru.yandex.practicum.filmorate.repository.storageimpl.GenreDbStorage;
 
 import java.util.List;
 

@@ -1,5 +1,7 @@
 package ru.yandex.practicum.filmorate.model;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import ru.yandex.practicum.filmorate.DateValidation;
 
@@ -29,5 +31,6 @@ public class Film {
     private Integer duration;
     private List<Genre> genres = new ArrayList<>();
     private Mpa mpa;
+    @JsonIgnore
     private final Set<Integer> likes = new TreeSet<>();
 }

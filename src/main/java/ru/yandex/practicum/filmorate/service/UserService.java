@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.repository.Storage;
+import ru.yandex.practicum.filmorate.repository.storages.UserStorage;
 
 import java.util.List;
 import java.util.Set;
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class UserService {
 
-    private final Storage<User> userStorage;
+    private final UserStorage userStorage;
 
     public User create(User user) {
         if (user.getName() == null || user.getName().isBlank()) {
@@ -45,40 +45,27 @@ public class UserService {
     public User addFriend(Integer id, Integer friendId) {
         User user = checkUserNotNull(id, friendId);
         user.getFriends().add(friendId);
-        userStorage.getById(friendId).getFriends().add(id);
-        log.info("Пользователи с id {} и id {} стали друзьями", id, friendId);
+        userStorage.addFriend(id, friendId);
+        log.info("Пользователь {} добавил в друзья пользователя {}", id, friendId);
         return user;
     }
 
     public void deleteFriend(Integer id, Integer friendId) {
         User user = checkUserNotNull(id, friendId);
         user.getFriends().remove(friendId);
-        userStorage.getById(friendId).getFriends().remove(id);
-        log.info("Пользователи с id {} и id {} перестали быть друзьями", id, friendId);
+        userStorage.deleteFriend(id, friendId);
+        log.info("Пользователь {} удалил из друзей пользователя {}", id, friendId);
     }
 
     public List<User> getUserFriends(Integer id) {
-        User user = checkUserNotNull(id);
-        return user.getFriends().stream()
-                .map(userStorage::getById)
-                .collect(Collectors.toList());
-    }
-
-    private List<User> getUserFriendsWithoutChecking(Integer id) {
-        Set<Integer> users = userStorage.getById(id).getFriends();
-        if (users.isEmpty()) {
-            return List.of();
-        } else {
-            return users.stream()
-                    .map(userStorage::getById)
-                    .collect(Collectors.toList());
-        }
+        checkUserNotNull(id);
+        return userStorage.getFriends(id);
     }
 
     public List<User> getCommonFriends(Integer id, Integer otherId) {
         checkUserNotNull(id, otherId);
-        List<User> userFriends = getUserFriendsWithoutChecking(id);
-        List<User> otherUserFriends = getUserFriendsWithoutChecking(otherId);
+        List<User> userFriends = getUserFriends(id);
+        List<User> otherUserFriends = getUserFriends(otherId);
         if (userFriends.isEmpty() || otherUserFriends.isEmpty()) {
             return List.of();
         } else {

@@ -7,7 +7,8 @@ import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.repository.Storage;
+import ru.yandex.practicum.filmorate.repository.storages.FilmStorage;
+import ru.yandex.practicum.filmorate.repository.storages.UserStorage;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,8 +18,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class FilmService {
 
-    private final Storage<Film> filmStorage;
-    private final Storage<User> userStorage;
+    private final FilmStorage filmStorage;
+    private final UserStorage userStorage;
 
     public Film create(Film film) {
         return filmStorage.create(film);
@@ -49,6 +50,7 @@ public class FilmService {
     public Film addLike(Integer id, Integer userId) {
         Film film = checkFilmAndUserNotNull(id, userId);
         film.getLikes().add(userId);
+        filmStorage.addLike(id, userId);
         log.info("Для фильма c id {} добавлен лайк от пользователя c userId {}", id, userId);
         return film;
     }
@@ -56,19 +58,12 @@ public class FilmService {
     public void deleteLike(Integer id, Integer userId) {
         Film film = checkFilmAndUserNotNull(id, userId);
         film.getLikes().remove(userId);
+        filmStorage.deleteLike(id, userId);
         log.info("Для фильма c id {} удалён лайк от пользователя с userId {}", id, userId);
     }
 
     public List<Film> getMostLikedFilms(Integer count) {
-        return filmStorage.getAll().stream()
-                .sorted(this::compare)
-                .limit(count)
-                .collect(Collectors.toList());
-    }
-
-    private int compare(Film f1, Film f2) {
-        int result = Integer.compare(f1.getLikes().size(), f2.getLikes().size());
-        return -1 * result;
+        return filmStorage.getMostLikedFilms(count);
     }
 
     private Film checkFilmAndUserNotNull(Integer id, Integer userId) {
