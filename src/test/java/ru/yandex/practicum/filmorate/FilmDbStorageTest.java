@@ -11,6 +11,7 @@ import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.repository.storageimpl.FilmDbStorage;
 
 import java.time.LocalDate;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -61,7 +62,7 @@ public class FilmDbStorageTest {
         film.setReleaseDate(LocalDate.now());
         film.setDuration(120);
         film.setMpa(new Mpa(2, "PG"));
-        film.setGenres(List.of());
+        film.setGenres(new LinkedHashSet<>());
         Film updatedFilm = filmStorage.update(newFilm);
         assertNotEquals(film, updatedFilm);
     }
@@ -74,7 +75,7 @@ public class FilmDbStorageTest {
         film.setReleaseDate(LocalDate.now());
         film.setDuration(120);
         film.setMpa(new Mpa(2, "PG"));
-        film.setGenres(List.of());
+        film.setGenres(new LinkedHashSet<>());
         return film;
     }
 }
