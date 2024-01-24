@@ -12,7 +12,6 @@ import ru.yandex.practicum.filmorate.repository.storageimpl.FilmDbStorage;
 
 import java.time.LocalDate;
 import java.util.LinkedHashSet;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
