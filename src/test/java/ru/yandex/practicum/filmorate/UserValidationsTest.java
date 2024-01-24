@@ -17,72 +17,60 @@ public class UserValidationsTest {
 
     private Validator validator;
     public static final int ID = 1;
+    private User user;
 
     @BeforeEach
     public void setUp() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
+        user = new User();
+        user.setId(ID);
     }
 
     @Test
     public void emptyEmailShouldFailValidation() {
-        User user = User.builder()
-                .id(ID)
-                .name("Name")
-                .login("Login")
-                .birthday(LocalDate.of(2023, 1, 1))
-                .build();
+        user.setName("Name");
+        user.setLogin("Login");
+        user.setBirthday(LocalDate.of(2023, 1, 1));
         Set<ConstraintViolation<User>> violations = validator.validate(user);
         assertFalse(violations.isEmpty());
     }
 
     @Test
     public void emailWithoutAtShouldFailValidation() {
-        User user = User.builder()
-                .id(ID)
-                .name("Name")
-                .email("exmaple_email.com")
-                .login("Login")
-                .birthday(LocalDate.of(2023, 1, 1))
-                .build();
+        user.setName("Name");
+        user.setLogin("Login");
+        user.setEmail("example_email.com");
+        user.setBirthday(LocalDate.of(2023, 1, 1));
         Set<ConstraintViolation<User>> violations = validator.validate(user);
         assertFalse(violations.isEmpty());
     }
 
     @Test
     public void emptyLoginShouldFailValidation() {
-        User user = User.builder()
-                .id(ID)
-                .name("Name")
-                .email("exmaple@email.com")
-                .birthday(LocalDate.of(2023, 1, 1))
-                .build();
+        user.setName("Name");
+        user.setEmail("example@email.com");
+        user.setBirthday(LocalDate.of(2023, 1, 1));
         Set<ConstraintViolation<User>> violations = validator.validate(user);
         assertFalse(violations.isEmpty());
     }
 
     @Test
     public void blankLoginShouldFailValidation() {
-        User user = User.builder()
-                .id(ID)
-                .name("Name")
-                .login("Lo gin")
-                .email("exmaple@email.com")
-                .birthday(LocalDate.of(2023, 1, 1))
-                .build();
+        user.setName("Name");
+        user.setLogin("Lo gin");
+        user.setEmail("example_email.com");
+        user.setBirthday(LocalDate.of(2023, 1, 1));
         Set<ConstraintViolation<User>> violations = validator.validate(user);
         assertFalse(violations.isEmpty());
     }
 
     @Test
     public void birthdayInFutureShouldFailValidation() {
-        User user = User.builder()
-                .id(ID)
-                .name("Name")
-                .login("Login")
-                .email("exmaple@email.com")
-                .birthday(LocalDate.of(2100, 1, 1))
-                .build();
+        user.setName("Name");
+        user.setLogin("Login");
+        user.setEmail("example@email.com");
+        user.setBirthday(LocalDate.of(2100, 1, 1));;
         Set<ConstraintViolation<User>> violations = validator.validate(user);
         assertFalse(violations.isEmpty());
     }

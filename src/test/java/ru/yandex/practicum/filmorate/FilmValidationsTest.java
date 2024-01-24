@@ -17,62 +17,53 @@ public class FilmValidationsTest {
 
     private Validator validator;
     public static final int ID = 1;
+    private Film film;
 
     @BeforeEach
     public void setUp() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
+        film = new Film();
+        film.setId(ID);
     }
 
     @Test
     public void emptyNameShouldFailValidation() {
-        Film film = Film.builder()
-                .id(ID)
-                .description("Description")
-                .duration(100)
-                .releaseDate(LocalDate.of(1956, 1, 1))
-                .build();
+        film.setDescription("Description");
+        film.setDuration(100);
+        film.setReleaseDate(LocalDate.of(1956, 1, 1));
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         assertFalse(violations.isEmpty());
     }
 
     @Test
     public void descriptionOver200CharsShouldFailValidation() {
-        Film film = Film.builder()
-                .id(ID)
-                .name("Name")
-                .description("Description over 200 Description over 200 Description over 200 Description over 200 " +
-                        "Description over 200 Description over 200 Description over 200 Description over 200 " +
-                        "Description over 200 Descriptiono")
-                .duration(100)
-                .releaseDate(LocalDate.of(1956, 1, 1))
-                .build();
+        film.setName("Name");
+        film.setDescription("Description over 200 Description over 200 Description over 200 Description over 200 " +
+                "Description over 200 Description over 200 Description over 200 Description over 200 " +
+                "Description over 200 Descriptiono");
+        film.setDuration(100);
+        film.setReleaseDate(LocalDate.of(1956, 1, 1));
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         assertFalse(violations.isEmpty());
     }
 
     @Test
     public void releaseDateBefore1895ShouldFailValidation() {
-        Film film = Film.builder()
-                .id(ID)
-                .name("Name")
-                .description("Description")
-                .duration(100)
-                .releaseDate(LocalDate.of(1894, 1, 1))
-                .build();
+        film.setName("Name");
+        film.setDescription("Description");
+        film.setDuration(100);
+        film.setReleaseDate(LocalDate.of(1894, 1, 1));
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         assertFalse(violations.isEmpty());
     }
 
     @Test
     public void negativeDurationShouldFailValidation() {
-        Film film = Film.builder()
-                .id(ID)
-                .name("Name")
-                .description("Description")
-                .duration(-100)
-                .releaseDate(LocalDate.of(1896, 1, 1))
-                .build();
+        film.setName("Name");
+        film.setDescription("Description");
+        film.setDuration(-100);
+        film.setReleaseDate(LocalDate.of(1896, 1, 1));
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         assertFalse(violations.isEmpty());
     }
