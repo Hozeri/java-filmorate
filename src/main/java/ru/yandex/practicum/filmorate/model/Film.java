@@ -1,21 +1,19 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.Builder;
 import lombok.Data;
 import ru.yandex.practicum.filmorate.DateValidation;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.LinkedHashSet;
 
 /**
  * Film.
  */
 @Data
-@Builder
 public class Film {
 
     private Integer id;
@@ -26,6 +24,8 @@ public class Film {
     @DateValidation
     private LocalDate releaseDate;
     @Positive(message = "Продолжительность фильма должна быть положительной")
-    private int duration;
-    private final Set<Integer> likes = new TreeSet<>();
+    private Integer duration;
+    private LinkedHashSet<Genre> genres = new LinkedHashSet<>();
+    @NotNull
+    private Mpa mpa;
 }

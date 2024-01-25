@@ -21,40 +21,40 @@ import java.util.List;
 @AllArgsConstructor
 public class FilmController {
 
-    private final FilmService filmService;
+    public final FilmService filmService;
 
     @PostMapping
-    private Film create(@RequestBody @Valid Film film) {
+    public Film create(@RequestBody @Valid Film film) {
         return filmService.create(film);
     }
 
     @PutMapping
-    private Film update(@RequestBody @Valid Film film) {
+    public Film update(@RequestBody @Valid Film film) {
         return filmService.update(film);
     }
 
     @GetMapping
-    private List<Film> getAllFilms() {
+    public List<Film> getAllFilms() {
         return filmService.getAllFilms();
     }
 
     @GetMapping("/{id}")
-    private Film getFilmById(@PathVariable Integer id) {
+    public Film getFilmById(@PathVariable Integer id) {
         return filmService.getFilmById(id);
     }
 
     @PutMapping("/{id}/like/{userId}")
-    private Film addLike(@PathVariable Integer id, @PathVariable Integer userId) {
+    public Film addLike(@PathVariable Integer id, @PathVariable Integer userId) {
         return filmService.addLike(id, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    private void deleteLike(@PathVariable Integer id, @PathVariable Integer userId) {
+    public void deleteLike(@PathVariable Integer id, @PathVariable Integer userId) {
         filmService.deleteLike(id, userId);
     }
 
     @GetMapping("/popular")
-    private List<Film> getMostLikedFilms(@RequestParam(defaultValue = "10") Integer count) {
+    public List<Film> getMostLikedFilms(@RequestParam(defaultValue = "10") Integer count) {
         return filmService.getMostLikedFilms(count);
     }
 
