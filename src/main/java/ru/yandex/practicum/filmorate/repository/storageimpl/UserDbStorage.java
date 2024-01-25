@@ -27,7 +27,7 @@ import static ru.yandex.practicum.filmorate.repository.queries.UserQueries.UPDAT
 @AllArgsConstructor
 public class UserDbStorage implements UserStorage {
 
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
     @Override
     public User create(User user) {

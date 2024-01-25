@@ -37,7 +37,7 @@ import static ru.yandex.practicum.filmorate.repository.queries.MpaQueries.GET_MP
 @AllArgsConstructor
 public class FilmDbStorage implements FilmStorage {
 
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
     @Override
     public Film create(Film film) {

@@ -16,7 +16,7 @@ import static ru.yandex.practicum.filmorate.repository.queries.MpaQueries.GET_MP
 @AllArgsConstructor
 public class MpaDbStorage implements GenreMpaStorage<Mpa> {
 
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
     @Override
     public Mpa getById(Integer id) {

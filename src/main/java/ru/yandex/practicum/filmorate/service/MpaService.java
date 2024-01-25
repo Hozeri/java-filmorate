@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 public class MpaService {
 
-    private MpaDbStorage mpaStorage;
+    private final MpaDbStorage mpaStorage;
 
     public Mpa getMpaById(Integer id) {
         if (id == null || id <= 0) {

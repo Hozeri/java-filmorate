@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 public class GenreService {
 
-    private GenreDbStorage genreStorage;
+    private final GenreDbStorage genreStorage;
 
     public Genre getGenreById(Integer id) {
         if (id == null || id <= 0) {

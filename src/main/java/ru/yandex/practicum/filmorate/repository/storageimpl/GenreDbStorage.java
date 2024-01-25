@@ -16,7 +16,7 @@ import static ru.yandex.practicum.filmorate.repository.queries.GenresQueries.GET
 @AllArgsConstructor
 public class GenreDbStorage implements GenreMpaStorage<Genre> {
 
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
     @Override
     public Genre getById(Integer id) {
